@@ -14,8 +14,8 @@ class TweetsController extends AbstractController
     public function index(string $username, TwitterApiService $twitterApiService, Request $request): Response
     {
         $options = [];
-        if ($request->query->has('next_token')) {
-            $options['pagination_token'] = $request->query->get('next_token');
+        if ($request->query->has('pagination_token')) {
+            $options['pagination_token'] = $request->query->get('pagination_token');
         }
 
         $user = $twitterApiService->findUser($username);

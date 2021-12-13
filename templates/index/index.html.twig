@@ -1,12 +1,14 @@
 {% extends 'base.html.twig' %}
 
 {% block body %}
-  {{ form_start(form) }}
-  <div>
+  <div class="container">
+    <h2>Twitter media</h2>
+
+    {{ form_start(form) }}
     {{ form_widget(form) }}
+    <div>
+      <button class="btn btn-primary">Submit</button>
+    </div>
+    {{ form_end(form) }}
   </div>
-  <div>
-    <button>Submit</button>
-  </div>
-  {{ form_end(form) }}
 {% endblock %}
