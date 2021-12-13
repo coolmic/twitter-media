@@ -1,7 +1,27 @@
 {% extends 'base.html.twig' %}
 
 {% block body %}
-<div>
-    <h3>{{ username }}</h3>
-</div>
+  <div>
+    <h3>{{ user.name }}</h3>
+
+    <div>
+      <ul>
+        {% for tweet in list %}
+          <li>
+            <div>
+              {{ tweet.text }}
+              <br>
+              {% for media in tweet.medias %}
+                <img src="{{ media.url }}" />
+              {% endfor %}
+            </div>
+          </li>
+        {% endfor %}
+      </ul>
+    </div>
+
+    <hr>
+
+    <a href="{{ path('tweets', { username: user.username, next_token: meta.next_token }) }}">next</a>
+  </div>
 {% endblock %}
