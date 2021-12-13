@@ -113,6 +113,9 @@
             ".env"
         ]
     },
+    "symfony/form": {
+        "version": "v6.0.1"
+    },
     "symfony/framework-bundle": {
         "version": "6.0",
         "recipe": {
@@ -153,6 +156,9 @@
     "symfony/polyfill-intl-grapheme": {
         "version": "v1.23.1"
     },
+    "symfony/polyfill-intl-icu": {
+        "version": "v1.23.0"
+    },
     "symfony/polyfill-intl-normalizer": {
         "version": "v1.23.0"
     },
@@ -163,6 +169,12 @@
         "version": "v1.23.0"
     },
     "symfony/process": {
+        "version": "v6.0.0"
+    },
+    "symfony/property-access": {
+        "version": "v6.0.0"
+    },
+    "symfony/property-info": {
         "version": "v6.0.0"
     },
     "symfony/routing": {
