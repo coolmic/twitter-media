@@ -5,10 +5,14 @@
     <h2>Twitter media</h2>
 
     {{ form_start(form) }}
-    {{ form_widget(form) }}
+
+    <turbo-frame id="form">
+      {{ form_widget(form) }}
+    </turbo-frame>
     <div>
       <button class="btn btn-primary">Submit</button>
     </div>
+
     {{ form_end(form) }}
   </div>
 {% endblock %}

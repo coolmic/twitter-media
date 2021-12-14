@@ -2,12 +2,18 @@
 
 {% block body %}
   <div class="container">
-    <h3><strong>{{ user.name }}</strong> Tweets</h3>
+    <div class="d-flex">
+      <h3><strong>{{ user.name }}</strong> Tweets</h3>
+      <a href="{{ path('home') }}" class="btn btn-outline-primary ms-auto" data-turbo="false">
+        <i class="fas fa-angle-double-left"></i>
+        Back
+      </a>
+    </div>
 
     {% include 'tweets/navigate.html.twig' %}
     <hr>
 
-    <div class="row ">
+    <div class="row">
       {% for tweet in list %}
         <div class="col-12 col-md-6 col-xl-4 d-flex mb-3">
           <div class="card text-dark bg-light p-2 d-flex justify-content-between">
@@ -15,7 +21,7 @@
 
             <div class="text-center">
               {% for media in tweet.medias %}
-                <img src="{{ media.url }}" class="img-fluid mb-2 rounded border-dark border-3" />
+                <img src="{{ media.url }}" class="img-fluid mb-2 rounded border-dark border-3"/>
               {% endfor %}
             </div>
           </div>

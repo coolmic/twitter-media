@@ -2,8 +2,9 @@
 
 namespace App\Service;
 
-use Symfony\Contracts\HttpClient\Exception\ExceptionInterface;
+use App\Exception\TwitterApiException;
 use Symfony\Contracts\HttpClient\HttpClientInterface;
+use Throwable;
 
 class TwitterApiService
 {
@@ -17,20 +18,20 @@ class TwitterApiService
     }
 
     /**
-     * @throws ExceptionInterface
+     * @throws TwitterApiException
      */
     public function getTweets(string $id, array $options = []): array
     {
         return $this->request('/2/users/'.$id.'/tweets', 'GET', [
-            'expansions' => 'attachments.media_keys',
-            'media.fields' => 'height,media_key,preview_image_url,type,url,width',
-            'exclude' => 'retweets,replies',
-            'max_results' => '30',
-        ] + $options);
+                'expansions' => 'attachments.media_keys',
+                'media.fields' => 'height,media_key,preview_image_url,type,url,width',
+                'exclude' => 'retweets,replies',
+                'max_results' => '30',
+            ] + $options);
     }
 
     /**
-     * @throws ExceptionInterface
+     * @throws TwitterApiException
      */
     public function findUser(string $username): array
     {
@@ -40,26 +41,39 @@ class TwitterApiService
     }
 
     /**
-     * @throws ExceptionInterface
+     * @throws TwitterApiException
      */
-    private function request(string $url, string $method = 'GET', array $query = [])
+    private function request(string $url, string $method = 'GET', array $query = []): array
     {
-        $response = $this->client->request(
-            $method,
-            'https://api.twitter.com'.$url,
-            [
-                'headers' => ['Authorization' => 'Bearer '.$this->bearerToken],
-                'query' => $query,
-            ]
-        );
+        try {
+            $response = $this->client->request(
+                $method,
+                'https://api.twitter.com'.$url,
+                [
+                    'headers' => ['Authorization' => 'Bearer '.$this->bearerToken],
+                    'query' => $query,
+                ]
+            );
+            $content = $response->getContent(false);
 
-        $content = $response->getContent(false);
-        $json = json_decode($content, true);
-        if (isset($json['errors'])) {
-            var_dump($json['errors']);
-            exit;
+            $json = json_decode($content, true);
+            if (isset($json['errors'])) {
+                $error = $json['errors'][0];
+
+                if (isset($error['message'])) {
+                    throw new TwitterApiException($error['message']);
+                }
+                if (isset($error['detail'])) {
+                    throw new TwitterApiException($error['detail']);
+                }
+                throw new TwitterApiException($content);
+            }
+
+            return $json;
+        } catch (TwitterApiException $e) {
+            throw $e;
+        } catch (Throwable $t) {
+            throw new TwitterApiException($t->getMessage());
         }
-
-        return $json;
     }
 }

@@ -2,19 +2,17 @@
 
 namespace App\Controller;
 
+use App\Exception\TwitterApiException;
 use App\Service\TwitterApiService;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
+use Symfony\Component\Form\FormError;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
-use Symfony\Contracts\HttpClient\Exception\ExceptionInterface;
 
 class IndexController extends AbstractController
 {
-    /**
-     * @throws ExceptionInterface
-     */
     #[Route('/', name: 'home')]
     public function index(Request $request, TwitterApiService $twitterApiService): Response
     {
@@ -26,9 +24,13 @@ class IndexController extends AbstractController
         if ($form->isSubmitted() && $form->isValid()) {
             $username = (string) $form->get('username')->getData();
 
-            $user = $twitterApiService->findUser($username);
+            try {
+                $user = $twitterApiService->findUser($username);
 
-            return $this->redirectToRoute('tweets', ['username' => $user['username']]);
+                return $this->redirectToRoute('tweets', ['username' => $user['username']]);
+            } catch (TwitterApiException $e) {
+                $form->get('username')->addError(new FormError($e->getMessage()));
+            }
         }
 
         return $this->renderForm('index/index.html.twig', [
