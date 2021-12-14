@@ -26,7 +26,7 @@ class TwitterApiService
                 'expansions' => 'attachments.media_keys',
                 'media.fields' => 'height,media_key,preview_image_url,type,url,width',
                 'exclude' => 'retweets,replies',
-                'max_results' => '30',
+                'max_results' => '100',
             ] + $options);
     }
 
@@ -43,12 +43,12 @@ class TwitterApiService
     /**
      * @throws TwitterApiException
      */
-    private function request(string $url, string $method = 'GET', array $query = []): array
+    private function request(string $path, string $method = 'GET', array $query = []): array
     {
         try {
             $response = $this->client->request(
                 $method,
-                'https://api.twitter.com'.$url,
+                'https://api.twitter.com'.$path,
                 [
                     'headers' => ['Authorization' => 'Bearer '.$this->bearerToken],
                     'query' => $query,

@@ -27,3 +27,7 @@ services:
     App\Service\TwitterApiService:
         arguments:
             $bearerToken: '%env(TWITTER_BEARER_TOKEN)%'
+
+    App\Service\DownloaderService:
+        arguments:
+            $basePath: '%kernel.project_dir%/downloaded/'

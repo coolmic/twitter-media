@@ -1,0 +1,21 @@
+{% for label, messages in app.flashes() %}
+  {% set icon = '' %}
+  {% if label == 'success' %}
+    {% set icon = 'fa-check' %}
+  {% elseif label == 'warning' %}
+    {% set icon = 'fa-exclamation-triangle' %}
+  {% elseif label == 'danger' %}
+    {% set icon = 'fa-ban' %}
+  {% elseif label == 'info' %}
+    {% set icon = 'fa-info' %}
+  {% endif %}
+  {% for message in messages %}
+    <div class="alert alert-{{ label }} alert-dismissible fade show" role="alert">
+      {% if icon %}
+        <i class="fas {{ icon }}"></i>
+      {% endif %}
+      {{ message }}
+      <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+  {% endfor %}
+{% endfor %}

@@ -18,8 +18,10 @@
   {% endblock %}
 </head>
 <body>
-<div class="mt-2">
+<main class="container pt-5" role="main">
+  {% include '_layout/flash-bag.html.twig' %}
+
   {% block body %}{% endblock %}
-</div>
+</main>
 </body>
 </html>

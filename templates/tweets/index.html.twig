@@ -4,7 +4,7 @@
   <div class="container">
     <div class="d-flex">
       <h3><strong>{{ user.name }}</strong> Tweets</h3>
-      <a href="{{ path('home') }}" class="btn btn-outline-primary ms-auto" data-turbo="false">
+      <a href="{{ path('home') }}" class="btn btn-outline-secondary ms-auto" data-turbo="false">
         <i class="fas fa-angle-double-left"></i>
         Back
       </a>
@@ -14,19 +14,33 @@
     <hr>
 
     <div class="row">
-      {% for tweet in list %}
-        <div class="col-12 col-md-6 col-xl-4 d-flex mb-3">
-          <div class="card text-dark bg-light p-2 d-flex justify-content-between">
-            <p>{{ tweet.text }}</p>
+      {% if list|length > 0 %}
+        {% for tweet in list %}
+          <div class="col-12 col-md-6 col-xl-4 d-flex mb-3">
+            <div class="card text-dark bg-info p-2 d-flex">
+              <p>{{ tweet.text }}</p>
 
-            <div class="text-center">
-              {% for media in tweet.medias %}
-                <img src="{{ media.url }}" class="img-fluid mb-2 rounded border-dark border-3"/>
-              {% endfor %}
+              <div class="flex-grow-1 row align-items-center">
+                {% set colSize = (tweet.medias|length > 1) ? 'col-6' : 'col-12' %}
+                {% for media in tweet.medias %}
+                  <div class="{{ colSize }}">
+                    {% include 'tweets/_image.html.twig' with {
+                      url: media.url,
+                      key: media.media_key,
+                      downloadUrl: path('tweets/download', { key: media.media_key, username: user.username, paginationToken: paginationToken, url: media.url }),
+                    } %}
+                  </div>
+                {% endfor %}
+              </div>
             </div>
           </div>
+        {% endfor %}
+
+      {% else %}
+        <div class="alert alert-warning">
+          No medias
         </div>
-      {% endfor %}
+      {% endif %}
     </div>
 
     <hr>

@@ -1,0 +1,24 @@
+<turbo-frame id="image-{{ key }}">
+  <div class="mb-1">
+    <img src="{{ url }}" class="img-fluid mb-2 rounded border-dark border-3" alt="image {{ key }}"/>
+    <div class="text-end">
+      {% if downloadUrl %}
+        <a href="{{ downloadUrl }}"
+           class="btn btn-sm btn-primary">
+          <i class="fas fa-download"></i>
+          <span class="sr-only">Download</span>
+        </a>
+      {% else %}
+        <span class="text-success">
+          <i class="fas fa-check"></i>
+          <span class="sr-only">Downloaded</span>
+        </span>
+      {% endif %}
+    </div>
+    {% if error is defined and error %}
+      <div class="alert alert-danger" role="alert">
+        {{ error }}
+      </div>
+    {% endif %}
+  </div>
+</turbo-frame>
