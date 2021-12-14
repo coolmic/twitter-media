@@ -1,10 +1,10 @@
 {% set isDl = downloadUrl is null %}
-<turbo-frame id="image-{{ key }}">
+<turbo-frame id="image-{{ media.media_key }}">
   <div class="mb-1" {{ stimulus_controller('media') }}>
     <img
-      src="{{ url }}"
+      src="{{ media.url }}"
       class="img-fluid mb-2 rounded border-dark border-3 {% if isDl %}opacity-50{% endif %}"
-      alt="image {{ key }}"
+      alt="image {{ media.media_key }}"
       {% if not isDl %}
         {{ stimulus_action('media', 'download', 'dblclick') }}
       {% endif %}

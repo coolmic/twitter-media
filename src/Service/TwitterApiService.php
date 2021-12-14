@@ -20,14 +20,25 @@ class TwitterApiService
     /**
      * @throws TwitterApiException
      */
-    public function getTweets(string $id, array $options = []): array
+    public function getTweets(string $userId, array $options = []): array
     {
-        return $this->request('/2/users/'.$id.'/tweets', 'GET', [
+        return $this->request('/2/users/'.$userId.'/tweets', 'GET', [
                 'expansions' => 'attachments.media_keys',
                 'media.fields' => 'height,media_key,preview_image_url,type,url,width',
-                'exclude' => 'retweets,replies',
+                'exclude' => 'replies',
                 'max_results' => '100',
             ] + $options);
+    }
+
+    /**
+     * @throws TwitterApiException
+     */
+    public function getTweetDetails(string $id): array
+    {
+        return $this->request('/2/tweets/'.$id, 'GET', [
+            'expansions' => 'attachments.media_keys,referenced_tweets.id.author_id',
+            'media.fields' => 'height,media_key,preview_image_url,type,url,width',
+        ]);
     }
 
     /**

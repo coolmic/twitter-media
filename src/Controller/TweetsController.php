@@ -3,6 +3,8 @@
 namespace App\Controller;
 
 use App\Exception\DownloadException;
+use App\Exception\TwitterApiException;
+use App\Helper\IterableHelper;
 use App\Service\DownloaderService;
 use App\Service\TwitterApiService;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -39,6 +41,7 @@ class TweetsController extends AbstractController
                     continue;
                 }
                 $tweet = [
+                    'id' => $datum['id'],
                     'text' => $datum['text'],
                     'medias' => [],
                 ];
@@ -62,19 +65,50 @@ class TweetsController extends AbstractController
     }
 
     #[Route('/tweets/download', name: 'tweets/download')]
-    public function download(Request $request, DownloaderService $downloaderService): Response
+    public function download(Request $request, TwitterApiService $twitterApiService, DownloaderService $downloaderService): Response
     {
-        $key = $request->query->get('key');
-        $username = $request->query->get('username');
+        $id = $request->query->get('id');
+        $mediaKey = $request->query->get('mediaKey');
         $paginationToken = $request->query->get('paginationToken');
-        $url = $request->query->get('url');
 
-        $downloadUrl = null;
-        $error = null;
-
-        $path = $username.DIRECTORY_SEPARATOR.pathinfo($url, PATHINFO_BASENAME);
         try {
+            $tweet = $twitterApiService->getTweetDetails($id);
+        } catch (TwitterApiException $e) {
+            if ($request->headers->has('Turbo-Frame')) {
+                return new Response($e->getMessage(), Response::HTTP_BAD_REQUEST);
+            }
+
+            $this->addFlash('danger', $e->getMessage());
+
+            return $this->redirectToRoute('home');
+        }
+
+        $data = $tweet['data'];
+        $authorId = $data['author_id'];
+        if (isset($data['referenced_tweets'])) {
+            $referencedTweetId = $data['referenced_tweets'][0]['id'];
+
+            $referencedTweet = IterableHelper::findFn($tweet['includes']['tweets'], function ($tweet) use ($referencedTweetId) {
+                return $tweet['id'] === $referencedTweetId;
+            });
+            $authorId = $referencedTweet['author_id'];
+        }
+
+        $user = IterableHelper::findFn($tweet['includes']['users'], function ($user) use ($authorId) {
+            return $user['id'] === $authorId;
+        });
+        $username = $user['username'];
+
+        $media = IterableHelper::findFn($tweet['includes']['media'], function ($media) use ($mediaKey) {
+            return $media['media_key'] === $mediaKey;
+        });
+        $url = $media['url'];
+
+        try {
+            $path = $username.DIRECTORY_SEPARATOR.pathinfo($url, PATHINFO_BASENAME);
             $downloaderService->download($url, $path);
+            $downloadUrl = null;
+            $error = null;
         } catch (DownloadException $e) {
             $downloadUrl = $request->getRequestUri();
             $error = $e->getMessage();
@@ -82,8 +116,7 @@ class TweetsController extends AbstractController
 
         if ($request->headers->has('Turbo-Frame')) {
             return $this->render('tweets/_image.html.twig', [
-                'key' => $key,
-                'url' => $url,
+                'media' => $media,
                 'downloadUrl' => $downloadUrl,
                 'error' => $error,
             ], new TurboStreamResponse());

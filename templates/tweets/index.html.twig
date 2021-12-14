@@ -25,9 +25,8 @@
                 {% for media in tweet.medias %}
                   <div class="{{ colSize }}">
                     {% include 'tweets/_image.html.twig' with {
-                      url: media.url,
-                      key: media.media_key,
-                      downloadUrl: path('tweets/download', { key: media.media_key, username: user.username, paginationToken: paginationToken, url: media.url }),
+                      media: media,
+                      downloadUrl: path('tweets/download', { id: tweet.id, mediaKey: media.media_key, paginationToken: paginationToken }),
                     } %}
                   </div>
                 {% endfor %}
