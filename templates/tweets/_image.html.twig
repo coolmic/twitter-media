@@ -1,10 +1,20 @@
+{% set isDl = downloadUrl is null %}
 <turbo-frame id="image-{{ key }}">
-  <div class="mb-1">
-    <img src="{{ url }}" class="img-fluid mb-2 rounded border-dark border-3" alt="image {{ key }}"/>
+  <div class="mb-1" {{ stimulus_controller('media') }}>
+    <img
+      src="{{ url }}"
+      class="img-fluid mb-2 rounded border-dark border-3 {% if isDl %}opacity-50{% endif %}"
+      alt="image {{ key }}"
+      {% if not isDl %}
+        {{ stimulus_action('media', 'download', 'dblclick') }}
+      {% endif %}
+    />
     <div class="text-end">
       {% if downloadUrl %}
         <a href="{{ downloadUrl }}"
-           class="btn btn-sm btn-primary">
+           class="btn btn-sm btn-primary"
+           {{ stimulus_target('media', 'download') }}
+        >
           <i class="fas fa-download"></i>
           <span class="sr-only">Download</span>
         </a>

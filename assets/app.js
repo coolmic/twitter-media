@@ -12,3 +12,10 @@ import './styles/app.css';
 import './bootstrap';
 
 import 'bootstrap/js/dist/alert';
+
+document.documentElement.addEventListener('turbo:load', () => {
+  setTimeout(() => {
+    window.scrollTo({ top: 0, behavior: 'auto' });
+  }, 100);
+});
+
