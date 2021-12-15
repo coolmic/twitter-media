@@ -1,13 +1,13 @@
 <div class="d-flex my-3">
   {% if meta.previous_token is defined %}
-    <a href="{{ path('tweets', { username: user.username, pagination_token: meta.previous_token }) }}"
+    <a href="{{ path('tweets/user', { username: user.username, pagination_token: meta.previous_token }) }}"
        class="btn btn-outline-info">
       <i class="fas fa-arrow-left"></i>
       Previous
     </a>
   {% endif %}
   {% if meta.next_token is defined %}
-    <a href="{{ path('tweets', { username: user.username, pagination_token: meta.next_token }) }}"
+    <a href="{{ path('tweets/user', { username: user.username, pagination_token: meta.next_token }) }}"
        class="btn btn-outline-info ms-auto">
       Next
       <i class="fas fa-arrow-right"></i>

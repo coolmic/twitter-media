@@ -4,13 +4,13 @@
   <div class="container">
     <div class="d-flex">
       <h3><strong>{{ user.name }}</strong> Tweets</h3>
-      <a href="{{ path('home') }}" class="btn btn-outline-secondary ms-auto" data-turbo="false">
+      <a href="{{ path('home') }}" class="btn btn-outline-secondary ms-auto">
         <i class="fas fa-angle-double-left"></i>
         Back
       </a>
     </div>
 
-    {% include 'tweets/navigate.html.twig' %}
+    {% include 'tweets/_navigate.html.twig' %}
     <hr>
 
     <div class="row">
@@ -43,6 +43,6 @@
     </div>
 
     <hr>
-    {% include 'tweets/navigate.html.twig' %}
+    {% include 'tweets/_navigate.html.twig' %}
   </div>
 {% endblock %}

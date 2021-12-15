@@ -16,25 +16,25 @@ class IndexController extends AbstractController
     #[Route('/', name: 'home')]
     public function index(Request $request, TwitterApiService $twitterApiService): Response
     {
-        $form = $this->createFormBuilder()
+        $userForm = $this->createFormBuilder()
             ->add('username', TextType::class)
             ->getForm();
 
-        $form->handleRequest($request);
-        if ($form->isSubmitted() && $form->isValid()) {
-            $username = (string) $form->get('username')->getData();
+        $userForm->handleRequest($request);
+        if ($userForm->isSubmitted() && $userForm->isValid()) {
+            $username = (string) $userForm->get('username')->getData();
 
             try {
                 $user = $twitterApiService->findUser($username);
 
-                return $this->redirectToRoute('tweets', ['username' => $user['username']]);
+                return $this->redirectToRoute('tweets/user', ['username' => $user['username']]);
             } catch (TwitterApiException $e) {
-                $form->get('username')->addError(new FormError($e->getMessage()));
+                $userForm->get('username')->addError(new FormError($e->getMessage()));
             }
         }
 
         return $this->renderForm('index/index.html.twig', [
-            'form' => $form,
+            'userForm' => $userForm,
         ]);
     }
 }

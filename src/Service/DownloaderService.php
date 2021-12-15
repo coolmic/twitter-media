@@ -24,6 +24,10 @@ class DownloaderService
     {
         $fullPath = $this->basePath.$path;
 
+        if (file_exists($fullPath)) {
+            return;
+        }
+
         $dirPath = dirname($fullPath);
         if (!file_exists($dirPath)) {
             if (!mkdir($dirPath, 0755, true)) {

@@ -15,8 +15,8 @@ use Symfony\UX\Turbo\Stream\TurboStreamResponse;
 
 class TweetsController extends AbstractController
 {
-    #[Route('/tweets/user/{username}', name: 'tweets')]
-    public function index(string $username, TwitterApiService $twitterApiService, Request $request): Response
+    #[Route('/tweets/user/{username}', name: 'tweets/user')]
+    public function user(string $username, TwitterApiService $twitterApiService, Request $request): Response
     {
         $paginationToken = null;
         if ($request->query->has('pagination_token')) {
@@ -24,9 +24,7 @@ class TweetsController extends AbstractController
         }
 
         $user = $twitterApiService->findUser($username);
-        $tweets = $twitterApiService->getTweets($user['id'], [
-            'pagination_token' => $paginationToken,
-        ]);
+        $tweets = $twitterApiService->getUserTweets($user['id'], $paginationToken);
 
         $list = [];
         if ($tweets['meta']['result_count'] > 0) {
@@ -56,7 +54,7 @@ class TweetsController extends AbstractController
             }
         }
 
-        return $this->render('tweets/index.html.twig', [
+        return $this->render('tweets/user.html.twig', [
             'user' => $user,
             'list' => $list,
             'meta' => $tweets['meta'],
@@ -128,7 +126,7 @@ class TweetsController extends AbstractController
             $this->addFlash('success', 'Download successful');
         }
 
-        return $this->redirectToRoute('tweets', [
+        return $this->redirectToRoute('tweets/user', [
             'username' => $username,
             'pagination_token' => $paginationToken,
         ], Response::HTTP_SEE_OTHER);

@@ -20,14 +20,27 @@ class TwitterApiService
     /**
      * @throws TwitterApiException
      */
-    public function getTweets(string $userId, array $options = []): array
+    public function getUserTweets(string $userId, ?string $paginationToken = null): array
     {
         return $this->request('/2/users/'.$userId.'/tweets', 'GET', [
-                'expansions' => 'attachments.media_keys',
-                'media.fields' => 'height,media_key,preview_image_url,type,url,width',
-                'exclude' => 'replies',
-                'max_results' => '100',
-            ] + $options);
+            'expansions' => 'attachments.media_keys',
+            'media.fields' => 'height,media_key,preview_image_url,type,url,width',
+//            'exclude' => 'replies',
+            'max_results' => '100',
+            'pagination_token' => $paginationToken,
+        ]);
+    }
+
+    /**
+     * @throws TwitterApiException
+     */
+    public function getTweetsByIds(array $ids): array
+    {
+        return $this->request('/2/tweets', 'GET', [
+            'expansions' => 'attachments.media_keys',
+            'media.fields' => 'height,media_key,preview_image_url,type,url,width',
+            'ids' => implode(',', $ids),
+        ]);
     }
 
     /**
@@ -68,6 +81,10 @@ class TwitterApiService
             $content = $response->getContent(false);
 
             $json = json_decode($content, true);
+            if (!$json) {
+                throw new TwitterApiException('Twitter response is not a valid json');
+            }
+
             if (isset($json['errors'])) {
                 $error = $json['errors'][0];
 
