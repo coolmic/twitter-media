@@ -2,17 +2,36 @@
 
 {% block body %}
   <div class="container">
-    <h2>Twitter media</h2>
+    <h1>Twitter media</h1>
 
-    {{ form_start(userForm) }}
+    <section class="py-3">
+      <h2>User tweets</h2>
 
-    <turbo-frame id="userForm">
-      {{ form_widget(userForm) }}
-    </turbo-frame>
-    <div>
-      <button class="btn btn-primary">Submit</button>
-    </div>
+      {{ form_start(userForm) }}
 
-    {{ form_end(userForm) }}
+      <turbo-frame id="userForm">
+        {{ form_row(userForm.username) }}
+      </turbo-frame>
+      <div>
+        <button class="btn btn-primary">Submit</button>
+      </div>
+
+      {{ form_end(userForm) }}
+    </section>
+
+    <section class="py-3">
+      <h2>Tweets ids</h2>
+
+      {{ form_start(idsForm) }}
+
+      <turbo-frame id="idsForm">
+        {{ form_row(idsForm.ids) }}
+      </turbo-frame>
+      <div>
+        <button class="btn btn-primary">Submit</button>
+      </div>
+
+      {{ form_end(idsForm) }}
+    </section>
   </div>
 {% endblock %}

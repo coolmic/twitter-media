@@ -62,6 +62,45 @@ class TweetsController extends AbstractController
         ]);
     }
 
+    #[Route('/tweets/ids', name: 'tweets/ids')]
+    public function ids(TwitterApiService $twitterApiService, Request $request): Response
+    {
+        $ids = $request->query->get('ids');
+
+        $tweets = $twitterApiService->getTweetsByIds(explode(',', $ids));
+
+        $list = [];
+
+        $medias = [];
+        if (isset($tweets['includes'])) {
+            foreach ($tweets['includes']['media'] as $media) {
+                $medias[$media['media_key']] = $media;
+            }
+        }
+        foreach ($tweets['data'] as $datum) {
+            if (!isset($datum['attachments'])) {
+                continue;
+            }
+            $tweet = [
+                'id' => $datum['id'],
+                'text' => $datum['text'],
+                'medias' => [],
+            ];
+            foreach ($datum['attachments']['media_keys'] as $mediaKey) {
+                if (isset($medias[$mediaKey]) && 'photo' === $medias[$mediaKey]['type']) {
+                    $tweet['medias'][] = $medias[$mediaKey];
+                }
+            }
+            if (count($tweet['medias']) > 0) {
+                $list[] = $tweet;
+            }
+        }
+
+        return $this->render('tweets/ids.html.twig', [
+            'list' => $list,
+        ]);
+    }
+
     #[Route('/tweets/download', name: 'tweets/download')]
     public function download(Request $request, TwitterApiService $twitterApiService, DownloaderService $downloaderService): Response
     {
