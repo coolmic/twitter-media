@@ -9,12 +9,10 @@ use Throwable;
 class DownloaderService
 {
     private string $basePath;
-    private HttpClientInterface $client;
 
-    public function __construct(string $basePath, HttpClientInterface $client)
+    public function __construct(string $basePath, private HttpClientInterface $client)
     {
         $this->basePath = $basePath;
-        $this->client = $client;
     }
 
     /**

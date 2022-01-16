@@ -8,12 +8,10 @@ use Throwable;
 
 class TwitterApiService
 {
-    private HttpClientInterface $client;
     private string $bearerToken;
 
-    public function __construct(HttpClientInterface $client, string $bearerToken)
+    public function __construct(private HttpClientInterface $client, string $bearerToken)
     {
-        $this->client = $client;
         $this->bearerToken = $bearerToken;
     }
 
