@@ -24,9 +24,8 @@ class TwitterApiService
     {
         return $this->request('/2/users/'.$userId.'/tweets', 'GET', [
             'expansions' => 'attachments.media_keys',
-            'media.fields' => 'height,media_key,preview_image_url,type,url,width',
-//            'exclude' => 'replies',
-            'max_results' => '100',
+            'media.fields' => 'type,url',
+            'max_results' => '40',
             'pagination_token' => $paginationToken,
         ]);
     }
@@ -38,7 +37,7 @@ class TwitterApiService
     {
         return $this->request('/2/tweets', 'GET', [
             'expansions' => 'attachments.media_keys',
-            'media.fields' => 'height,media_key,preview_image_url,type,url,width',
+            'media.fields' => 'type,url',
             'ids' => implode(',', $ids),
         ]);
     }
